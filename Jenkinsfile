@@ -29,11 +29,18 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-tokan') {
-                    sh "mvn sonar:sonar"
+                    sh "mvn sonar:sonar@123"
                     }
                 }
 
             }
         }
+        stage('Quality Gate') {
+            stage {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-tokan'
+                }
+            }
+        }   
     }
 }
