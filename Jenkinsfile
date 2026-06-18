@@ -1,19 +1,28 @@
-pipeline {  
-
-    agent any
-        
-    tools{
-        maven "Maven-3.9.9"
+pipeline {
+    agent { label 'Jenkins-Agent' }
+    tools {
+        jdk 'Java17'
+        maven 'maven3'
     }
-    stages {
-        stage('Clone') {
+    stages{
+        stage('cleanup workspace') {
             steps {
-               git 'https://github.com/ashokitschool/maven-web-app.git'
+                cleanWs()
             }
         }
-        stage('Build') {
+        stage('checkout from SCM') {
             steps {
-               sh 'mvn clean package'
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/sagam-mahadik/Maven-Tomcat.git'
+            }
+        }
+        stage('Build application') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Application Test') {
+            steps {
+                sh 'mvn test'
             }
         }
     }
